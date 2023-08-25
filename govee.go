@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 const Version = "0.0.1"
@@ -51,7 +52,16 @@ func (c *Client) Run(request GoveeRequest) (GoveeResponse, error) {
 }
 
 func (c *Client) getRequest(request GoveeRequest) *http.Request {
-	req, _ := http.NewRequest(request.GetMethod(), "https://developer-api.govee.com"+request.GetEndpoint(), nil)
+	params := request.GetParams()
+	url := "https://developer-api.govee.com" + request.GetEndpoint()
+	if len(params) > 0 {
+		url += "?"
+		for key, value := range params {
+			url += key + "=" + value + "&"
+		}
+		url = strings.TrimSuffix(url, "&")
+	}
+	req, _ := http.NewRequest(request.GetMethod(), url, nil)
 	return req
 }
 
@@ -66,6 +76,7 @@ type GoveeRequest interface {
 	GetEndpoint() string
 	GetMethod() string
 	GetBody() interface{}
+	GetParams() map[string]string
 }
 
 type GoveeResponse struct {
@@ -77,10 +88,19 @@ type GoveeResponse struct {
 func (g GoveeResponse) Devices() Devices {
 	return g.Data.Devices
 }
+func (g GoveeResponse) Device() string {
+	return g.Data.Device
+}
+func (g GoveeResponse) Model() string {
+	return g.Data.Model
+}
+func (g GoveeResponse) Properties() []map[string]interface{} {
+	return g.Data.Properties
+}
 
 type ResponseData struct {
-	Device     string                 `json:"device"`
-	Model      string                 `json:"model"`
-	Properties map[string]interface{} `json:"properties"`
-	Devices    []Device               `json:"devices"`
+	Device     string                   `json:"device"`
+	Model      string                   `json:"model"`
+	Properties []map[string]interface{} `json:"properties"`
+	Devices    []Device                 `json:"devices"`
 }

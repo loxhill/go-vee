@@ -24,6 +24,9 @@ func (d DeviceControlRequest) GetMethod() string {
 func (d DeviceControlRequest) GetBody() interface{} {
 	return d.Body
 }
+func (d DeviceControlRequest) GetParams() map[string]string {
+	return nil
+}
 
 type DeviceControlBody struct {
 	Device string `json:"device"`
@@ -49,6 +52,28 @@ func (d DeviceListRequest) GetMethod() string {
 }
 func (d DeviceListRequest) GetBody() interface{} {
 	return nil
+}
+func (d DeviceListRequest) GetParams() map[string]string {
+	return nil
+}
+
+type DeviceStateRequest struct {
+	Endpoint string
+	Method   string
+	Params   map[string]string
+}
+
+func (d DeviceStateRequest) GetEndpoint() string {
+	return d.Endpoint
+}
+func (d DeviceStateRequest) GetMethod() string {
+	return d.Method
+}
+func (d DeviceStateRequest) GetBody() interface{} {
+	return nil
+}
+func (d DeviceStateRequest) GetParams() map[string]string {
+	return d.Params
 }
 
 func (c *Client) Device(device string, model string) *Device {
@@ -129,6 +154,17 @@ func (d *Device) isCmdSupported(cmd string) bool {
 		}
 	}
 	return false
+}
+
+func (d *Device) State() DeviceStateRequest {
+	return DeviceStateRequest{
+		Method: "GET",
+		Params: map[string]string{
+			"device": d.Device,
+			"model":  d.Model,
+		},
+		Endpoint: "/v1/devices/state",
+	}
 }
 
 type Properties struct {
