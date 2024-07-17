@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/loxhill/go-vee/shortcut"
 )
 
 const Version = "0.6.0"
@@ -78,6 +80,11 @@ func (c *Client) ControlDevice(device Device, capabilityType, instance string, v
 		return fmt.Errorf("could not control device %v: %v", device.Device, resp.Msg)
 	}
 	return nil
+}
+
+// ControlDevice sends control instructions for a particular device ID.
+func (c *Client) ControlDeviceWithShortcut(device Device, s shortcut.Shortcut) error {
+	return c.ControlDevice(device, s.CapabilityType, s.Instance, s.Value)
 }
 
 func (c *Client) run(request GoveeRequest) (GoveeResponse, error) {

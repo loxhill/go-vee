@@ -43,4 +43,11 @@ err = client.ControlDevice(devices[0], "devices.capabilities.on_off", "powerSwit
 if err != nil {
     panic(err)
 }
+
+// send a command to a device using a shortcut
+// TurnOn() translates to ("devices.capabilities.on_off", "powerSwitch", 1)
+err = client.ControlDeviceWithShortcut(devices[0], shortcut.TurnOn())
+if err != nil {
+    panic(err)
+}
 ```
