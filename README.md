@@ -21,6 +21,7 @@ package main
 import (
     "fmt"
     govee "github.com/loxhill/go-vee"
+    "github.com/loxhill/go-vee/shortcut"
 )
 
 client := govee.New("your-api-key")
